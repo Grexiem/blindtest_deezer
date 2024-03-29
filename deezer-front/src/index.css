@@ -1,0 +1,141 @@
+@font-face {
+  font-family: "Font Awesome";
+  src:
+    local("Font Awesome"),
+    url(./font/fontawesome-webfont.ttf) format("truetype");
+}
+
+@font-face {
+  font-family: "Lahksaman";
+  src:
+    local("Lahksaman"),
+    url(./font/Laksaman.ttf) format("truetype");
+}
+
+body {
+  margin: 0;
+  background-color: aquamarine;
+  font-family: Lahksaman sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1 {
+  font-size: 5em;
+  font-family: Font Awesome;
+  text-align: center;
+  color: grey;
+}
+
+h2 {
+  font-size: 4em;
+  font-family:
+    Font Awesome,
+    sans-serif;
+  text-align: center;
+  color: grey;
+  text-decoration-line: underline;
+}
+
+h3 {
+  font-size: 3em;
+  font-family: Lahksaman, sans-serif;
+  text-align: center;
+  color: black;
+}
+
+p {
+  text-align: center;
+  font-family: Lahksaman, sans-serif;
+}
+#boutons {
+  display: grid;
+  margin-top: 0.5em;
+}
+
+#choice {
+  display: block;
+}
+img {
+  float: left;
+  margin-left: 1em;
+}
+
+#error {
+  background-color: firebrick;
+  color: white;
+  text-align: center;
+  font-size: 2em;
+  padding: auto;
+  margin-right: 33%;
+  margin-left: 33%;
+  border-radius: 2em;
+}
+
+form {
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+form button {
+  background-color: BurlyWood;
+  padding-left: 2.5%;
+  padding-right: 2.5%;
+  margin: 1em 1em 1em 1em;
+}
+
+form input {
+  height: 2em;
+  font-size: 3em;
+  border-radius: 2em;
+  text-align: center;
+  text-shadow: 2px 2px 5px red;
+}
+
+button {
+  background-color: seagreen;
+  margin: 1em 25% 1em 25%;
+  border-radius: 3em;
+  height: 3em;
+  font-size: 2em;
+  color: whitesmoke;
+}
+
+#playlists {
+  background-color: azure;
+  border-radius: 1em;
+}
+
+a {
+  color: DarkSlateGray;
+  text-decoration: none;
+}
+
+#playlists a:link {
+  color: black;
+  text-decoration: none;
+}
+
+@media only screen and (max-width: 598px) {
+  h1 {
+    font-size: 3em;
+  }
+  h2 {
+    font-size: 2em;
+  }
+  button {
+    height: 4em;
+    font-size: 1em;
+  }
+  img {
+    width: 0;
+    height: 0;
+  }
+  form input {
+    height: 1em;
+    font-size: 1.5em;
+  }
+  #error {
+    font-size: 0.75em;
+  }
+}
