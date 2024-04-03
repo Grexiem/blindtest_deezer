@@ -21,7 +21,7 @@ const PlaylistsEn = () => {
   };
 
   const handleClick = (id) => {
-    window.location.href = "/play/" + id;
+    window.location.href = "/en/play/" + id;
   };
 
   return (
