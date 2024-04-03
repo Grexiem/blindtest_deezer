@@ -16,6 +16,9 @@ function Accueil() {
       <h2>
         <Link to="/help">Aide</Link>
       </h2>
+      <h3>
+        <Link to="/en">English version</Link>
+      </h3>
     </div>
   );
 }
