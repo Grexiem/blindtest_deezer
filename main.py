@@ -46,7 +46,7 @@ def getting_specific_playlists(creds, query1):
     return tab
 
 
-def create_json_blindtest(creds, id, id_playlist, nb_round):
+def create_json_blindtest(creds, id, id_playlist, pseudo, nb_round):
     client = init(creds)
     playlist = client.get_playlist(id_playlist)
     list_song = playlist.get_tracks()
@@ -64,7 +64,7 @@ def create_json_blindtest(creds, id, id_playlist, nb_round):
         print(titres_choisis)
         titre_choisi = random.choice(list_song)
         if titre_choisi.preview != "":
-            if not (titre_choisi.title in titres_choisis):
+            if titre_choisi.title not in titres_choisis:
                 antiblocage = 0
                 g = Guess(
                     titre_choisi.title,
@@ -95,7 +95,12 @@ def create_json_blindtest(creds, id, id_playlist, nb_round):
                 dicts.append(dict_round)
                 round = round + 1
         antiblocage = antiblocage + 1
-    dict_global = {"name": playlist.title, "blindtest": dicts, "score": {}}
+    dict_global = {
+        "name": playlist.title,
+        "creator": pseudo,
+        "blindtest": dicts,
+        "score": {},
+    }
     file = "blindtest/" + str(id) + ".json"
     f = open(file, "a")
     f.write(json.dumps(dict_global))
@@ -174,11 +179,8 @@ def get_all_playlists():
             data = json.loads(f.read())
             f.close()
             name = data["name"]
+            creator = data["creator"]
             length = len(data["blindtest"])
-            bl = {"id": id, "name": name, "length": length}
+            bl = {"id": id, "creator": creator, "name": name, "length": length}
             tab.append(bl)
     return tab
-
-
-if __name__ == "__main__":
-    get_all_playlists()
