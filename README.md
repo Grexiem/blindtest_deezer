@@ -1,5 +1,7 @@
 # Blindtest Deezer
 
+[README ENGLISH](/README_en.md)
+
 Cette application est liée à votre compte deezer et permet de créer des blindtests à partir de vos playlists privées et des playlists publiques.
 Le nombre de blindtests créé est illimité et vous pouvez rejouer autant de fois que vous voulez. Un système de score permet de garder en mémoire les meilleurs performances.
 
@@ -20,7 +22,7 @@ npm install
 ## Faire une demande d'application Deezer
 
 Vous devrez créer une application du côté du développement de [Deezer](https://developers.deezer.com/)
-Vous aurez besoin d'un ID de l'application `app`, de sont mot de passe `app_secret` ainsi que d'un token d'accès `access_token`.
+Vous aurez besoin d'un ID de l'application `app`, de son mot de passe `app_secret` ainsi que d'un token d'accès `access_token`.
 Une fois ces 3 données récupérées, mettez-les dans `config.json` à l'endroit prévu (entre les "")
 
 ## Configuration Serveur
