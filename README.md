@@ -13,6 +13,8 @@ Vous devrez donc une fois dans la racine du projet inscrire ces commandes :
 
 ```
 pip install -r requirements.txt
+cd deezer-front
+npm install
 ```
 
 ## Faire une demande d'application Deezer
@@ -35,23 +37,30 @@ Récupérez l'ip utilisée qui sera toujours la même temps que vous restez sur 
 Mettez cet IP dans `config.json` dans `"ip"`
 
 # Lancer le Serveur
+
 Ouvrez une console de commande, déplacez vous vers la racine du projet avec `cd` puis inscrivez cette commande :
+
 ```
 python3 app.py & npm start --prefix deezer-front
 ```
 
 En cas de problème, ouvrez 2 console de commandes :
+
 - l'une à la racine du projet, Linux :`/`, Windows : `\`;
+
 ```
 python3 app.py
 ```
+
 - l'autre dans le dossier, Linux : `/deezer-front/`, Windows : `\deezer-front\`:
+
 ```
 npm start
 ```
+
 ## Commencer à jouer
 
-La première fois que vous jouez vous aurez besoin d'accepter la diffusion de média automatiquement. Normalement situé en haut sur la barre de recherche avec un micro ou une caméra. 
+La première fois que vous jouez vous aurez besoin d'accepter la diffusion de média automatiquement. Normalement situé en haut sur la barre de recherche avec un micro ou une caméra.
 En effet le jeu nécessite de lancer la musique dès que vous ouvrez la page.
 Une fois accepté vous pouvez jouer à l'infini.
 

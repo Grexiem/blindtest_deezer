@@ -12,6 +12,7 @@ from main import (
 from flask_cors import CORS, cross_origin
 import random
 import json
+import string
 
 with open("config.json") as config_file:
     config_data = json.load(config_file)
@@ -19,8 +20,10 @@ with open("config.json") as config_file:
 app = Flask(__name__)
 
 server_settings = config_data["server_settings"]
-creds = config_data["deezer_settings"]
-
+if config_data["platform"] == "deezer":
+    creds = config_data["deezer_settings"]
+else:
+    creds = config_data["spotify_settings"]
 
 CORS(app, supports_credentials=True)
 
@@ -44,14 +47,21 @@ def get_specific():
 
 
 # Call pour créer le JSON du blindtest grâce à l'id de la playlist et le nombre de round demandé
-@app.route("/generate_blindtest/<id_playlist>/<nb_round>", methods=["GET"])
+@app.route("/generate_blindtest/<id_playlist>/<pseudo>/<nb_round>", methods=["GET"])
 @cross_origin(supports_credentials=True)
-def create_blindtest(id_playlist, nb_round):
-    id_blindtest = random.randint(1, 1000)
-    error = create_json_blindtest(creds, id_blindtest, id_playlist, int(nb_round))
+def create_blindtest(id_playlist, pseudo, nb_round):
+    id_blindtest = random.choices(string.ascii_letters + string.digits, k=6)
+    id = ""
+    for k in id_blindtest:
+        id = id + str(k)
+    if len(pseudo) > 4:
+        bt_name = pseudo[0:4] + id
+    else:
+        bt_name = pseudo + id
+    error = create_json_blindtest(creds, bt_name, id_playlist, pseudo, int(nb_round))
     if error:
-        id_blindtest = "Le nombre de round est élevé pour la taille de playlist"
-    return jsonify({"id": id_blindtest})
+        id_blindtest = "TOO MUCH"
+    return jsonify({"id": bt_name})
 
 
 # Call qui appelle l'instance de round d'un blindtest

@@ -36,8 +36,8 @@ const PlaylistsEn = () => {
                   handleClick(playlist.id);
                 }}
               >
-                Name : {playlist.name}, Rounds : {playlist.length}, ID :{" "}
-                {playlist.id}
+                Creator : {playlist.creator}, Name : {playlist.name}, Rounds :{" "}
+                {playlist.length}, ID : {playlist.id}
               </h3>
             );
           })}

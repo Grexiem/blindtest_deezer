@@ -56,6 +56,8 @@ function CreateEn() {
           "generate_blindtest/" +
           id_playlist +
           "/" +
+          formJson["pseudo"].toString() +
+          "/" +
           formJson["nb_round"].toString(),
       );
       const result = await response.json();
@@ -105,20 +107,28 @@ function CreateEn() {
       <form onSubmit={create_Blindtest}>
         <input type="number" name="nb_round" min="1" max="100"></input>
         <br />
+        <h3>Creator Pseudo</h3>
+        <input type="text" name="pseudo"></input>
         <button type="submit">Create</button>
       </form>
       {id_blindtest ? (
         <div>
-          <h2>Quizz ID is :</h2>
-          <h3>{id_blindtest}</h3>
-          <h3>Don't forget it</h3>
-          <h2
-            onClick={() => {
-              handlePlay(id_blindtest);
-            }}
-          >
-            Play
-          </h2>
+          {id_blindtest !== "TOO MUCH" ? (
+            <div>
+              <h2>Quizz ID is :</h2>
+              <h3>{id_blindtest}</h3>
+              <h3>Don't forget it</h3>
+              <h2
+                onClick={() => {
+                  handlePlay(id_blindtest);
+                }}
+              >
+                Play
+              </h2>
+            </div>
+          ) : (
+            <h3>Too much round for this playlist</h3>
+          )}
         </div>
       ) : (
         <p id="error">Waiting</p>

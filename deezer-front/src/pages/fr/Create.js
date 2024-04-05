@@ -56,6 +56,8 @@ function Create() {
           "generate_blindtest/" +
           id_playlist +
           "/" +
+          formJson["pseudo"].toString() +
+          "/" +
           formJson["nb_round"].toString(),
       );
       const result = await response.json();
@@ -107,20 +109,28 @@ function Create() {
       <form onSubmit={create_Blindtest}>
         <input type="number" name="nb_round" min="1" max="100"></input>
         <br />
+        <h3>Pseudo Créateur :</h3>
+        <input type="text" name="pseudo"></input>
         <button type="submit">Créer</button>
       </form>
       {id_blindtest ? (
         <div>
-          <h2>L'ID de votre blindtest est :</h2>
-          <h3>{id_blindtest}</h3>
-          <h3>Retenez-le bien</h3>
-          <h2
-            onClick={() => {
-              handlePlay(id_blindtest);
-            }}
-          >
-            Play
-          </h2>
+          {id_blindtest !== "TOO MUCH" ? (
+            <div>
+              <h2>L'ID de votre blindtest est :</h2>
+              <h3>{id_blindtest}</h3>
+              <h3>Retenez-le bien</h3>
+              <h2
+                onClick={() => {
+                  handlePlay(id_blindtest);
+                }}
+              >
+                Play
+              </h2>
+            </div>
+          ) : (
+            <h3>Nombre de rounds trop élevé</h3>
+          )}
         </div>
       ) : (
         <p id="error">En attente de création du blindtest</p>
