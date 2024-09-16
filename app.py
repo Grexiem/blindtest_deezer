@@ -20,10 +20,8 @@ with open("config.json") as config_file:
 app = Flask(__name__)
 
 server_settings = config_data["server_settings"]
-if config_data["platform"] == "deezer":
-    creds = config_data["deezer_settings"]
-else:
-    creds = config_data["spotify_settings"]
+creds = config_data["deezer_settings"]
+platform = config_data["platform"]
 
 CORS(app, supports_credentials=True)
 
@@ -32,7 +30,7 @@ CORS(app, supports_credentials=True)
 @app.route("/get_own_playlists", methods=["GET"])
 @cross_origin(supports_credentials=True)
 def get_own_playlists():
-    tab_playlists = getting_playlist_user(creds)
+    tab_playlists = getting_playlist_user(platform, creds)
     return jsonify({"playlists": tab_playlists})
 
 
@@ -42,7 +40,7 @@ def get_own_playlists():
 def get_specific():
     query = request.args
     print(query["query"])
-    tab_playlists = getting_specific_playlists(creds, query["query"])
+    tab_playlists = getting_specific_playlists(platform, creds, query["query"])
     return jsonify({"playlists": tab_playlists})
 
 
@@ -58,7 +56,9 @@ def create_blindtest(id_playlist, pseudo, nb_round):
         bt_name = pseudo[0:4] + id
     else:
         bt_name = pseudo + id
-    error = create_json_blindtest(creds, bt_name, id_playlist, pseudo, int(nb_round))
+    error = create_json_blindtest(
+        platform, creds, bt_name, id_playlist, pseudo, int(nb_round)
+    )
     if error:
         id_blindtest = "TOO MUCH"
     return jsonify({"id": bt_name})
