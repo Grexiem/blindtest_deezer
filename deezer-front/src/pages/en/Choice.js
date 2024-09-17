@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import Cookies from 'universal-cookie';
 import { useState, useEffect } from "react";
 import ScoreEn from "./Score";
 const ChoiceEn = () => {

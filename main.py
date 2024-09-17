@@ -1,4 +1,6 @@
 import deezer
+
+##import spotify
 import random
 import json
 import os
@@ -12,7 +14,7 @@ class Guess:
 
 
 # Récupération des creds du client Deezer
-def init(creds):
+def init_deezer(creds):
     return deezer.Client(
         app_id=creds["app_id"],
         app_secret=creds["app_secret"],
@@ -20,11 +22,23 @@ def init(creds):
     )
 
 
-def getting_playlist_user(creds):
-    client = init(creds)
-    user = client.get_user()
-    playlists = user.get_playlists()
-    print(playlists[0].title)
+def init_spotify(creds):
+    return spotify.Client(creds["app_id"], creds["app_secret"])
+    spotify.User.from_token(creds["access_token"])
+
+
+def getting_playlist_user(platform, creds):
+    if platform == "deezer":
+        client = init_deezer(creds)
+        user = client.get_user()
+        playlists = user.get_playlists()
+    else:
+        if platform == "spotify":
+            client = init_spotify(creds)
+            user = spotify.User.from_token(creds["access_token"])
+            playlists = user.get_playlists()
+        else:
+            return []
     tab = []
     for i in range(5):
         temp = {"id": playlists[i].id, "title": playlists[i].title}
@@ -32,9 +46,17 @@ def getting_playlist_user(creds):
     return tab
 
 
-def getting_specific_playlists(creds, query1):
-    client = init(creds)
-    playlists = client.search_playlists(query1)
+def getting_specific_playlists(platform, creds, query1):
+    if platform == "deezer":
+        client = init_deezer(creds)
+        playlists = client.search_playlists(query1)
+    else:
+        if platform == "spotify":
+            client = init_spotify(creds)
+            playlists = client.search(query1, types=["playlist"], limit=5)
+        else:
+            return []
+
     tab = []
     for i in range(5):
         temp = {
@@ -46,9 +68,17 @@ def getting_specific_playlists(creds, query1):
     return tab
 
 
-def create_json_blindtest(creds, id, id_playlist, pseudo, nb_round):
-    client = init(creds)
-    playlist = client.get_playlist(id_playlist)
+def create_json_blindtest(platform, creds, id, id_playlist, pseudo, nb_round):
+    if platform == "deezer":
+        client = init_deezer(creds)
+        playlist = client.get_playlist(id_playlist)
+    else:
+        if platform == "spotify":
+            client = init_spotify(creds)
+            playlist = client.get_playlist(id_playlist)
+        else:
+            return []
+
     list_song = playlist.get_tracks()
     titres_choisis = set()
     random.seed(id)
@@ -127,23 +157,6 @@ def blindtest(id, round):
     return json_formatte["blindtest"][x]
 
 
-def get_score_player(player, blindtest):
-    file = "blindtest/" + str(blindtest) + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    if data["score"][str(player)]:
-        score = data["score"][str(player)]
-    else:
-        score = 0
-        player_score = {str(player): 0}
-        data["score"].update(player_score)
-        f2 = open(file, "w")
-        f2.write(json.dumps(data))
-        f2.close()
-    print(score)
-    return score
-
 
 def get_blindtest(blindtest):
     file = "blindtest/" + str(blindtest) + ".json"
@@ -153,7 +166,44 @@ def get_blindtest(blindtest):
     return data
 
 
+def check_player(player):
+    file = "players/" + str(player) + ".json"
+    if not os.path.isfile(file):
+        f = open(file, "w")
+        data = {
+            "name": player,
+            "score" : {}
+        }
+        f.write(json.dumps(data))
+        f.close()
+
+def get_score_player(player):
+    file = "players/" + str(player) + ".json"
+    f = open(file, "r")
+    data = json.loads(f.read())
+    f.close()
+    return data["score"]
+
 def change_score_player(player, score, blindtest):
+    file = "players/" + str(player) + ".json"
+    f = open(file, "r")
+    data = json.loads(f.read())
+    f.close()
+    data["score"][str(blindtest)] = score
+    f2 = open(file, "w")
+    f2.write(json.dumps(data))
+    f2.close()
+    return score
+
+
+def get_score_bt(blindtest):
+    file = "blindtest/" + str(blindtest) + ".json"
+    f = open(file, "r")
+    data = json.loads(f.read())
+    f.close()
+    return data["score"]
+
+def change_score_bt(player, score, blindtest):
     file = "blindtest/" + str(blindtest) + ".json"
     f = open(file, "r")
     data = json.loads(f.read())

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Cookies from 'universal-cookie';
 
 function Create() {
   const [id_blindtest, setId_blindtest] = useState(null);
@@ -7,7 +8,8 @@ function Create() {
   const [name_playlist, setName_playlist] = useState(null);
   const [playlists, setPlaylists] = useState(null);
   const ip = "http://" + window.location.host.split(":")[0] + ":5000/";
-
+  const cookies = new Cookies(null, { path: '/' });
+  const player_cookie = cookies.get("player")
   useEffect(() => {
     if (playlists == null) {
       getFirstPlaylists();
@@ -110,8 +112,7 @@ function Create() {
         <input type="number" name="nb_round" min="1" max="100"></input>
         <br />
         <h3>Pseudo Créateur :</h3>
-        <input type="text" name="pseudo"></input>
-        <button type="submit">Créer</button>
+        <h3>{player_cookie}</h3>
       </form>
       {id_blindtest ? (
         <div>

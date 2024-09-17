@@ -1,4 +1,6 @@
 import { useParams, Link } from "react-router-dom";
+import Cookies from 'universal-cookie';
+
 function PlayEn() {
   const { id } = useParams();
   function setBlindtest(e) {
