@@ -1,9 +1,9 @@
 import { useParams, Link } from "react-router-dom";
-import Cookies from 'universal-cookie';
+import Cookies from "universal-cookie";
 function Play() {
   const { id } = useParams();
-  const cookies = new Cookies(null, { path: '/' });
-  const player_cookie = cookies.get("player")
+  const cookies = new Cookies(null, { path: "/" });
+  const player_cookie = cookies.get("player");
   function setBlindtest(e) {
     e.preventDefault();
     const form = e.target;
@@ -11,9 +11,9 @@ function Play() {
     const formJson = Object.fromEntries(formData.entries());
     console.log(formJson["id"]);
     cookies.set("index", 1);
-    cookies.set("bt", formJson["id"])
-    window.location.href =
-      "/choice/" + formJson["id"] + "/1/" + player_cookie;
+    cookies.set("bt", formJson["id"]);
+    cookies.set("score", 0);
+    window.location.href = "/choice/" + formJson["id"] + "/1/" + player_cookie;
   }
 
   return (

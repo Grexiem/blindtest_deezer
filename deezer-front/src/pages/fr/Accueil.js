@@ -1,26 +1,21 @@
 import { Link } from "react-router-dom";
-import Cookies from 'universal-cookie';
-import PlayerName from "./PlayerName"
+import Cookies from "universal-cookie";
+import PlayerName from "./PlayerName";
 
 function Accueil() {
-
-  const cookies = new Cookies(null, { path: '/' });
-  const player_cookie = cookies.get("player")
+  const cookies = new Cookies(null, { path: "/" });
+  const player_cookie = cookies.get("player");
 
   return (
     <div>
       <h1>Accueil</h1>
-      {
-        !player_cookie ?  
-        (<dialog open>
-          <PlayerName/>
-          </dialog>
-          )
-      :
-      (
+      {!player_cookie ? (
+        <dialog open>
+          <PlayerName />
+        </dialog>
+      ) : (
         <div></div>
-        )
-      }
+      )}
       <h2>
         <Link to="/create">Créer</Link>
       </h2>
@@ -39,7 +34,7 @@ function Accueil() {
       <h3>
         <Link to="/en">English version</Link>
       </h3>
-      
+      <button onPressed={cookies.remove("player")}>Se déconnecter</button>
     </div>
   );
 }

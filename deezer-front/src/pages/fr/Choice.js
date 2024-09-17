@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import Cookies from 'universal-cookie';
+import Cookies from "universal-cookie";
 import { useState, useEffect } from "react";
 import Score from "./Score";
 const Choice = () => {
@@ -7,23 +7,22 @@ const Choice = () => {
   const [answer, setAnswer] = useState(null);
   const [songs, setSongs] = useState(null);
   const [track, setTrack] = useState(null);
-  const [score, setScore] = useState(0);
   const [scores, setScores] = useState(null);
   const [alreadyAnswered, setAlreadyAnswered] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
   const { id, round, player_name } = useParams();
   const ip = "http://" + window.location.host.split(":")[0] + ":5000/";
-  const cookies = new Cookies(null, { path: '/' });
-  const player_cookie = cookies.get("player")
-  const bt_cookie = cookies.get("bt")
-  const index_cookie = cookies.get("index")
+  const cookies = new Cookies(null, { path: "/" });
+  const player_cookie = cookies.get("player");
+  const bt_cookie = cookies.get("bt");
+  const index_cookie = cookies.get("index");
+  const score_cookie = cookies.get("score");
 
   useEffect(() => {
     if (answer == null) {
       if (parseInt(round) === 1) {
         setScoreAPI(0);
       }
-      getScore();
       getSongs();
       if (scores === null) {
         get_All_Score();
@@ -41,9 +40,10 @@ const Choice = () => {
   const get_All_Score = async () => {
     if (end) {
       try {
+        setScoreAPI(score_cookie);
         const response = await fetch(ip + "get_all_score/" + id.toString());
         const scores = await response.json();
-        setScores(scores["scores"]);
+        setScores(scores["score"]);
         console.log(scores);
       } catch (e) {
         console.error("Error fetching data : ", e);
@@ -57,12 +57,10 @@ const Choice = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ score: number }),
       };
-      const response = await fetch(
+      await fetch(
         ip + "score/" + player_name.toString() + "/" + id.toString() + "/",
         requestOptions,
       );
-      const result = await response.json();
-      setScore(result["score"]);
     } catch (e) {
       console.log(e);
     }
@@ -73,18 +71,6 @@ const Choice = () => {
       return timeLeft - 1;
     } else {
       return 0;
-    }
-  };
-
-  const getScore = async () => {
-    try {
-      const response = await fetch(
-        ip + "score/" + player_name.toString() + "/" + id.toString() + "/",
-      );
-      const result = await response.json();
-      setScore(result["score"]);
-    } catch (e) {
-      console.log(e);
     }
   };
 
@@ -110,11 +96,13 @@ const Choice = () => {
     if (!alreadyAnswered) {
       if (song.title === answer) {
         let round_score = Math.round((timeLeft * 100) / 30);
-        setScoreAPI(parseInt(score) + round_score);
+        //setScoreAPI(parseInt(score) + round_score);
+        cookies.set("score", parseInt(score_cookie) + parseInt(round_score));
       }
       setAlreadyAnswered(true);
       await new Promise((r) => setTimeout(r, 3000));
       const round2 = parseInt(index_cookie) + 1;
+      cookies.set("index", round2);
       window.location.href =
         "/choice/" +
         bt_cookie.toString() +
@@ -159,7 +147,7 @@ const Choice = () => {
       ) : (
         <p id="error">Chargement des musiques</p>
       )}
-      <Score score={score} />
+      <Score score={score_cookie} />
       {scores ? (
         <div>
           {Object.keys(scores).map((name) => (
