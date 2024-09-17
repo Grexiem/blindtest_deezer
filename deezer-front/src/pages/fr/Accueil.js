@@ -31,6 +31,9 @@ function Accueil() {
         <Link to="/play/0">Jouer</Link>
       </h2>
       <h2>
+        <Link to="/score">Mes Scores</Link>
+      </h2>
+      <h2>
         <Link to="/help">Aide</Link>
       </h2>
       <h3>

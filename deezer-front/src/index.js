@@ -15,6 +15,7 @@ import ChoiceEn from "./pages/en/Choice";
 import ScoreEn from "./pages/en/Score";
 import PlaylistsEn from "./pages/en/Playlists";
 import HelpEn from "./pages/en/Help";
+import AchTable from "./pages/fr/Achievment_Table";
 import "./index.css";
 
 export default function App() {
@@ -25,7 +26,7 @@ export default function App() {
         <Route path="create" element={<Create />} />
         <Route path="play/:id" element={<Play />} />
         <Route path="choice/:id/:round/:player_name" element={<Choice />} />
-        <Route path="score" element={<Score />} />
+        <Route path="score" element={<AchTable />} />
         <Route path="playlists" element={<Playlists />} />
         <Route path="help" element={<Help />} />
         <Route path="en" element={<AccueilEn />} />
