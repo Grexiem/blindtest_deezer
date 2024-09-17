@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import Cookies from 'universal-cookie';
 import { useState, useEffect } from "react";
 import Score from "./Score";
 const Choice = () => {
@@ -12,6 +13,10 @@ const Choice = () => {
   const [timeLeft, setTimeLeft] = useState(30);
   const { id, round, player_name } = useParams();
   const ip = "http://" + window.location.host.split(":")[0] + ":5000/";
+  const cookies = new Cookies(null, { path: '/' });
+  const player_cookie = cookies.get("player")
+  const bt_cookie = cookies.get("bt")
+  const index_cookie = cookies.get("index")
 
   useEffect(() => {
     if (answer == null) {
@@ -109,14 +114,14 @@ const Choice = () => {
       }
       setAlreadyAnswered(true);
       await new Promise((r) => setTimeout(r, 3000));
-      const round2 = parseInt(round) + 1;
+      const round2 = parseInt(index_cookie) + 1;
       window.location.href =
         "/choice/" +
-        id.toString() +
+        bt_cookie.toString() +
         "/" +
         round2.toString() +
         "/" +
-        player_name.toString();
+        player_cookie.toString();
     }
   };
   const launchMusic = () => {
