@@ -1,0 +1,12 @@
+{
+  "plaform": "deezer",
+  "server_settings": {
+    "ip": "http://localhost/",
+    "port": "5000"
+  },
+  "deezer_settings": {
+    "app_id": "000000",
+    "app_secret": "XXX",
+    "access_token": "XXX"
+  }
+}
