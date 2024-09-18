@@ -86,16 +86,19 @@ def launch_blindtest(id, round):
 def score(player, id):
     if request.method == "GET":
         score = get_score_player(player)
-        for bt in score :
-            if(bt["id"] == id):
+        for bt in score:
+            if bt["id"] == id:
                 return jsonify({"score": bt["score"]})
         return jsonify({"score": 0})
     if request.method == "POST":
         temp = request.get_json()
         print(str(temp))
         score = change_score_player(player, temp["score"], id)
+        print(score)
         score = change_score_bt(player, temp["score"], id)
+        print(score)
         return jsonify({"score": score})
+
 
 # Call qui récupère tous les scores d'un blindtest
 @app.route("/get_all_score/<id>/", methods=["GET"])
@@ -112,6 +115,7 @@ def get_playlists():
     playlists = get_all_playlists()
     return jsonify({"playlists": playlists})
 
+
 # Call création si besoin d'un joueur
 @app.route("/get_player/", methods=["POST"])
 @cross_origin(supports_credentials=True)
@@ -120,12 +124,18 @@ def get_player():
     check_player(temp["name"])
     return temp
 
+
 # Call pour récupérer les scores d'un joueur
 @app.route("/get_score/<id>/", methods=["GET"])
 @cross_origin(supports_credentials=True)
 def get_player_score(id):
     score = get_score_player(id)
-    return jsonify({"score" : score})
+    tab = []
+    for k, v in score.items():
+        bt = get_blindtest(k)
+        info = {"nom": bt["name"], "score": v, "rounds": len(bt["blindtest"])}
+        tab.append(info)
+    return jsonify({"scores": tab})
 
 
 if __name__ == "__main__":

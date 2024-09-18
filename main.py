@@ -157,7 +157,6 @@ def blindtest(id, round):
     return json_formatte["blindtest"][x]
 
 
-
 def get_blindtest(blindtest):
     file = "blindtest/" + str(blindtest) + ".json"
     f = open(file, "r")
@@ -170,12 +169,10 @@ def check_player(player):
     file = "players/" + str(player) + ".json"
     if not os.path.isfile(file):
         f = open(file, "w")
-        data = {
-            "name": player,
-            "score" : {}
-        }
+        data = {"name": player, "score": {}}
         f.write(json.dumps(data))
         f.close()
+
 
 def get_score_player(player):
     file = "players/" + str(player) + ".json"
@@ -184,12 +181,16 @@ def get_score_player(player):
     f.close()
     return data["score"]
 
+
 def change_score_player(player, score, blindtest):
-    file = "players/" + str(player) + ".json"
+    file = "players/" + player + ".json"
     f = open(file, "r")
     data = json.loads(f.read())
     f.close()
-    data["score"][str(blindtest)] = score
+    if blindtest in data["score"]:
+        if data["score"][blindtest] > score:
+            score = data["score"][blindtest]
+    data["score"][blindtest] = score
     f2 = open(file, "w")
     f2.write(json.dumps(data))
     f2.close()
@@ -203,12 +204,17 @@ def get_score_bt(blindtest):
     f.close()
     return data["score"]
 
+
 def change_score_bt(player, score, blindtest):
-    file = "blindtest/" + str(blindtest) + ".json"
+    file = "blindtest/" + blindtest + ".json"
     f = open(file, "r")
     data = json.loads(f.read())
     f.close()
-    data["score"][str(player)] = score
+    if player in data["score"]:
+        if data["score"][player] > score:
+            score = data["score"][player]
+
+    data["score"][player] = score
     f2 = open(file, "w")
     f2.write(json.dumps(data))
     f2.close()

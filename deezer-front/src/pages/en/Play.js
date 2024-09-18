@@ -1,25 +1,20 @@
-import { useParams, Link } from "react-router-dom";
-import Cookies from 'universal-cookie';
-
+import { Link } from "react-router-dom";
+import { setBlindtest } from "../../components/BlindtestFun";
+import Cookies from "universal-cookie";
 function PlayEn() {
-  const { id } = useParams();
-  function setBlindtest(e) {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson["id"]);
-    window.location.href =
-      "/en/choice/" + formJson["id"] + "/1/" + formJson["player_name"];
-  }
-
+  const cookies = new Cookies(null, { path: "/" });
+  const player_cookie = cookies.get("player");
   return (
     <div>
       <h1>Play</h1>
-      <form method="post" onSubmit={setBlindtest}>
-        <h3>Quizz ID :</h3> <input name="id" defaultValue={id} />
+      <form
+        method="post"
+        onSubmit={(e) => {
+          setBlindtest(e, "/en");
+        }}
+      >
         <h3>Username :</h3>
-        <input name="player_name" />
+        <h3>{player_cookie}</h3>
         <button type="submit">Play</button>
       </form>
       <h2>
