@@ -23,18 +23,29 @@ function Accueil() {
         <Link to="/playlists">Playlists</Link>
       </h2>
       <h2>
-        <Link to="/play/0">Jouer</Link>
-      </h2>
-      <h2>
         <Link to="/score">Mes Scores</Link>
       </h2>
       <h2>
         <Link to="/help">Aide</Link>
       </h2>
-      <h3>
-        <Link to="/en">English version</Link>
-      </h3>
-      <button onPressed={cookies.remove("player")}>Se déconnecter</button>
+      <span>
+        <h3>
+          <Link to="/en">English version</Link>
+        </h3>
+        {player_cookie ? (
+          <button
+            onClick={() => {
+              cookies.remove("player");
+              window.location.reload();
+            }}
+            id="deconnect"
+          >
+            &#128275;
+          </button>
+        ) : (
+          <p></p>
+        )}
+      </span>
     </div>
   );
 }

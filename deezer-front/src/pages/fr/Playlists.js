@@ -1,27 +1,24 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { getPlaylists } from "../../components/PlaylistFun";
+import Cookies from "universal-cookie";
 
 const Playlists = () => {
+  const cookies = new Cookies(null, { path: "/" });
   const [playlists, setPlaylists] = useState(null);
-  const ip = "http://" + window.location.host.split(":")[0] + ":5000/";
   useEffect(() => {
+    const fetchPlaylist = async () => {
+      var temp = await getPlaylists();
+      setPlaylists(temp);
+    };
     if (playlists == null) {
-      getPlaylists();
+      fetchPlaylist();
     }
   });
 
-  const getPlaylists = async () => {
-    try {
-      const response = await fetch(ip + "get_all_playlists/");
-      const result = await response.json();
-      setPlaylists(result["playlists"]);
-    } catch (e) {
-      console.error("Error fetching data : ", e);
-    }
-  };
-
   const handleClick = (id) => {
-    window.location.href = "/play/" + id;
+    cookies.set("bt", id);
+    window.location.href = "/play";
   };
 
   return (
@@ -37,7 +34,7 @@ const Playlists = () => {
                 }}
               >
                 Créateur : {playlist.creator}, Nom : {playlist.name}, Rounds :{" "}
-                {playlist.length}, ID : {playlist.id}
+                {playlist.length}
               </h3>
             );
           })}

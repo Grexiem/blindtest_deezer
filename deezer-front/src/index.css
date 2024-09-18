@@ -13,7 +13,8 @@
 }
 
 body {
-  margin: 0;
+  margin-top: 2em;
+  margin-bottom: 2em;
   background-color: aquamarine;
   font-family: Lahksaman sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -21,14 +22,14 @@ body {
 }
 
 h1 {
-  font-size: 5em;
+  font-size: 4em;
   font-family: Font Awesome;
   text-align: center;
   color: grey;
 }
 
 h2 {
-  font-size: 4em;
+  font-size: 3em;
   font-family:
     Font Awesome,
     sans-serif;
@@ -38,7 +39,7 @@ h2 {
 }
 
 h3 {
-  font-size: 3em;
+  font-size: 2em;
   font-family: Lahksaman, sans-serif;
   text-align: center;
   color: black;
@@ -48,9 +49,52 @@ p {
   text-align: center;
   font-family: Lahksaman, sans-serif;
 }
+
+span {
+  display: inline-grid;
+}
+
+div {
+  display: grid;
+  padding: 0.5em;
+}
+
+dialog {
+  margin-top: 15em;
+  border-radius: 3em;
+  background-color: DodgerBlue;
+}
+
+#readybox {
+  margin: auto;
+  background-color: seagreen;
+  height: 90vh;
+  width: 90vw;
+  display: flex;
+}
+
+#readybox button {
+  height: 50vh;
+  width: 50vw;
+  margin: auto;
+  font-size: 10vw;
+  background-color: aquamarine;
+  color: black;
+}
+
 #boutons {
   display: grid;
   margin-top: 0.5em;
+}
+
+#deconnect {
+  float: right;
+  text-align: center;
+  background-color: white;
+  margin: 0em 0em 0em 0em;
+  border-radius: 3em;
+  font-size: 1em;
+  color: whitesmoke;
 }
 
 #choice {

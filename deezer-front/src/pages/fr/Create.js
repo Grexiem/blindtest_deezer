@@ -1,86 +1,46 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import Cookies from 'universal-cookie';
+import {
+  getFirstPlaylists,
+  search_playlist,
+  create_Blindtest,
+} from "../../components/PlaylistFun";
+import Cookies from "universal-cookie";
 
 function Create() {
   const [id_blindtest, setId_blindtest] = useState(null);
   const [id_playlist, setId_playlist] = useState(null);
   const [name_playlist, setName_playlist] = useState(null);
   const [playlists, setPlaylists] = useState(null);
-  const ip = "http://" + window.location.host.split(":")[0] + ":5000/";
-  const cookies = new Cookies(null, { path: '/' });
-  const player_cookie = cookies.get("player")
+  const cookies = new Cookies(null, { path: "/" });
+  const player_cookie = cookies.get("player");
   useEffect(() => {
+    const fetchPlaylist = async () => {
+      var temp = await getFirstPlaylists();
+      setPlaylists(temp);
+    };
     if (playlists == null) {
-      getFirstPlaylists();
+      fetchPlaylist();
     }
   });
-  const getFirstPlaylists = async () => {
-    try {
-      const response = await fetch(ip + "get_own_playlists");
-      const result = await response.json();
-      setPlaylists(result["playlists"]);
-    } catch (e) {
-      console.error("Error fetching data : ", e);
-    }
-  };
-
-  const search_playlist = async (e) => {
-    e.preventDefault();
-
-    // Read the form data
-    const form = e.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson["query"]);
-    try {
-      const response = await fetch(
-        ip + "get_specific?query=" + formJson["query"].toString(),
-      );
-      const result = await response.json();
-      setPlaylists(result["playlists"].slice(0, 5));
-    } catch (e) {
-      console.error("Error fetching data : ", e);
-    }
-  };
-
-  const create_Blindtest = async (e) => {
-    e.preventDefault();
-
-    // Read the form data
-    const form = e.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson["nb_round"]);
-    try {
-      const response = await fetch(
-        ip +
-          "generate_blindtest/" +
-          id_playlist +
-          "/" +
-          formJson["pseudo"].toString() +
-          "/" +
-          formJson["nb_round"].toString(),
-      );
-      const result = await response.json();
-      setId_blindtest(result["id"]);
-    } catch (e) {
-      console.error("Error fetching data : ", e);
-    }
-  };
-
   const handleClick = (pl) => {
     setId_playlist(pl["id"]);
     setName_playlist(pl["title"]);
   };
 
   const handlePlay = (id) => {
-    window.location.href = "/play/" + id;
+    cookies.set("bt", id);
+    window.location.href = "/play";
   };
   return (
     <div>
       <h1>Créer un Blindtest</h1>
-      <form onSubmit={search_playlist}>
+      <form
+        onSubmit={async (e) => {
+          var temp = await search_playlist(e);
+          setPlaylists(temp);
+        }}
+      >
         <input type="text" name="query"></input>
         <br />
         <button type="submit">Rechercher</button>
@@ -108,11 +68,17 @@ function Create() {
         <h1> En attente des playlists</h1>
       )}
       <h2>Choisissez le nombre de round du blindtest</h2>
-      <form onSubmit={create_Blindtest}>
+      <form
+        onSubmit={async (e) => {
+          var temp = await create_Blindtest(e, id_playlist);
+          setId_blindtest(temp);
+        }}
+      >
         <input type="number" name="nb_round" min="1" max="100"></input>
         <br />
         <h3>Pseudo Créateur :</h3>
         <h3>{player_cookie}</h3>
+        <button type="submit">Créer</button>
       </form>
       {id_blindtest ? (
         <div>
