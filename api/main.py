@@ -3,7 +3,6 @@ import deezer
 ##import spotify
 import random
 import json
-import os
 
 
 class Guess:
@@ -131,112 +130,8 @@ def create_json_blindtest(platform, creds, id, id_playlist, pseudo, nb_round):
         "blindtest": dicts,
         "score": {},
     }
-    file = "blindtest/" + str(id) + ".json"
+    file = "../blindtest/" + str(id) + ".json"
     f = open(file, "a")
     f.write(json.dumps(dict_global))
     f.close()
     return False
-
-
-def blindtest(id, round):
-    file = "blindtest/" + str(id) + ".json"
-    f = open(file, "r")
-    json_recup = f.read()
-    json_formatte = json.loads(json_recup)
-    non_trouve = True
-    x = 0
-    if len(json_formatte["blindtest"]) < int(round):
-        return {"answer": "FIN", "guesses": "FIN", "track": "FIN"}
-    while non_trouve:
-        if json_formatte["blindtest"][x]["round"] == int(round):
-            print(json_formatte["blindtest"][x])
-            non_trouve = False
-        else:
-            x = x + 1
-    f.close()
-    return json_formatte["blindtest"][x]
-
-
-def get_blindtest(blindtest):
-    file = "blindtest/" + str(blindtest) + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    return data
-
-
-def check_player(player):
-    file = "players/" + str(player) + ".json"
-    if not os.path.isfile(file):
-        f = open(file, "w")
-        data = {"name": player, "score": {}}
-        f.write(json.dumps(data))
-        f.close()
-
-
-def get_score_player(player):
-    file = "players/" + str(player) + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    return data["score"]
-
-
-def change_score_player(player, score, blindtest):
-    file = "players/" + player + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    if blindtest in data["score"]:
-        if data["score"][blindtest] > score:
-            score = data["score"][blindtest]
-    data["score"][blindtest] = score
-    f2 = open(file, "w")
-    f2.write(json.dumps(data))
-    f2.close()
-    return score
-
-
-def get_score_bt(blindtest):
-    file = "blindtest/" + str(blindtest) + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    return data["score"]
-
-
-def change_score_bt(player, score, blindtest):
-    file = "blindtest/" + blindtest + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    if player in data["score"]:
-        if data["score"][player] > score:
-            score = data["score"][player]
-
-    data["score"][player] = score
-    f2 = open(file, "w")
-    f2.write(json.dumps(data))
-    f2.close()
-    return score
-
-
-def get_all_playlists():
-    tab = []
-    folder_path = "blindtest/"
-    files = os.listdir(folder_path)
-    files = [file for file in files if os.path.isfile(os.path.join(folder_path, file))]
-    if not files:
-        print("the folder is empty.")
-    else:
-        for blindtest in files:
-            id = blindtest.split(".")[0]
-            f = open(folder_path + blindtest, "r")
-            data = json.loads(f.read())
-            f.close()
-            name = data["name"]
-            creator = data["creator"]
-            length = len(data["blindtest"])
-            bl = {"id": id, "creator": creator, "name": name, "length": length}
-            tab.append(bl)
-    return tab

@@ -1,17 +1,21 @@
 from flask import Flask, jsonify, request
 from main import (
-    blindtest,
     create_json_blindtest,
-    get_score_player,
-    change_score_player,
-    change_score_bt,
     getting_playlist_user,
     getting_specific_playlists,
-    get_blindtest,
-    get_all_playlists,
+)
+from player import (
+    get_score_player,
+    change_score_player,
     check_player,
 )
-from flask_cors import CORS, cross_origin
+from bt import (
+    blindtest,
+    change_score_bt,
+    get_blindtest,
+    get_all_playlists,
+)
+from flask_cors import CORS
 import random
 import json
 import string
@@ -30,7 +34,6 @@ CORS(app, supports_credentials=True)
 
 # Call qui récupère mes playlists pour les avoir rapidement.
 @app.route("/get_own_playlists/", methods=["GET"])
-@cross_origin(supports_credentials=True)
 def get_own_playlists():
     tab_playlists = getting_playlist_user(platform, creds)
     return jsonify({"playlists": tab_playlists})
@@ -38,7 +41,6 @@ def get_own_playlists():
 
 # Call qui récupèrent des playlists selon une query (text)
 @app.route("/get_specific/", methods=["GET"])
-@cross_origin(supports_credentials=True)
 def get_specific():
     query = request.args
     print(query["query"])
@@ -48,7 +50,6 @@ def get_specific():
 
 # Call pour créer le JSON du blindtest grâce à l'id de la playlist et le nombre de round demandé
 @app.route("/generate_blindtest/<id_playlist>/<pseudo>/<nb_round>/", methods=["GET"])
-@cross_origin(supports_credentials=True)
 def create_blindtest(id_playlist, pseudo, nb_round):
     id_blindtest = random.choices(string.ascii_letters + string.digits, k=6)
     id = ""
@@ -68,7 +69,6 @@ def create_blindtest(id_playlist, pseudo, nb_round):
 
 # Call qui appelle l'instance de round d'un blindtest
 @app.route("/blindtest/<id>/<round>/", methods=["GET"])
-@cross_origin(supports_credentials=True)
 def launch_blindtest(id, round):
     result = blindtest(id, round)
     return jsonify(
@@ -82,7 +82,6 @@ def launch_blindtest(id, round):
 
 # Call pour récupérer le score d'un joueur
 @app.route("/score/<player>/<id>/", methods=["GET", "POST"])
-@cross_origin(supports_credentials=True)
 def score(player, id):
     if request.method == "GET":
         score = get_score_player(player)
@@ -102,7 +101,6 @@ def score(player, id):
 
 # Call qui récupère tous les scores d'un blindtest
 @app.route("/get_all_score/<id>/", methods=["GET"])
-@cross_origin(supports_credentials=True)
 def get_bt_scores(id):
     blindtest = get_blindtest(id)
     return jsonify({"score": blindtest["score"]})
@@ -110,7 +108,6 @@ def get_bt_scores(id):
 
 # Call qui récupère tous les scores d'un blindtest
 @app.route("/get_all_playlists/", methods=["GET"])
-@cross_origin(supports_credentials=True)
 def get_playlists():
     playlists = get_all_playlists()
     return jsonify({"playlists": playlists})
@@ -118,7 +115,6 @@ def get_playlists():
 
 # Call création si besoin d'un joueur
 @app.route("/get_player/", methods=["POST"])
-@cross_origin(supports_credentials=True)
 def get_player():
     temp = request.get_json()
     check_player(temp["name"])
@@ -127,7 +123,6 @@ def get_player():
 
 # Call pour récupérer les scores d'un joueur
 @app.route("/get_score/<id>/", methods=["GET"])
-@cross_origin(supports_credentials=True)
 def get_player_score(id):
     score = get_score_player(id)
     tab = []
