@@ -1,4 +1,8 @@
 from flask import Flask, jsonify, request
+import pymongo
+from pymongo.errors import ConnectionFailure
+from bson.json_util import dumps, loads, LEGACY_JSON_OPTIONS
+
 from main import (
     create_json_blindtest,
     getting_playlist_user,
@@ -23,7 +27,8 @@ import string
 with open("config.json") as config_file:
     config_data = json.load(config_file)
 
-app = Flask(__name__)
+
+app = Flask(__name__, static_folder="../build", static_url_path="/")
 
 server_settings = config_data["server_settings"]
 creds = config_data["deezer_settings"]
@@ -32,10 +37,25 @@ platform = config_data["platform"]
 CORS(app, supports_credentials=True)
 
 
+try:
+    myclient = pymongo.MongoClient(
+        config_data["mongoURL"],
+        tls=True,
+    )
+    blindtest_db = myclient["blindtest"]
+    print(myclient.list_database_names())
+    server_info = myclient.server_info()
+    print(server_info["version"])
+
+except (Exception, ConnectionFailure) as error:
+    print(error)
+
+
 # Call qui récupère mes playlists pour les avoir rapidement.
 @app.route("/get_own_playlists/", methods=["GET"])
 def get_own_playlists():
     tab_playlists = getting_playlist_user(platform, creds)
+    # print(myclient.list_database_names())
     return jsonify({"playlists": tab_playlists})
 
 
@@ -51,6 +71,7 @@ def get_specific():
 # Call pour créer le JSON du blindtest grâce à l'id de la playlist et le nombre de round demandé
 @app.route("/generate_blindtest/<id_playlist>/<pseudo>/<nb_round>/", methods=["GET"])
 def create_blindtest(id_playlist, pseudo, nb_round):
+    """
     id_blindtest = random.choices(string.ascii_letters + string.digits, k=6)
     id = ""
     for k in id_blindtest:
@@ -59,18 +80,17 @@ def create_blindtest(id_playlist, pseudo, nb_round):
         bt_name = pseudo[0:4] + id
     else:
         bt_name = pseudo + id
-    error = create_json_blindtest(
-        platform, creds, bt_name, id_playlist, pseudo, int(nb_round)
+    """
+    create_json_blindtest(
+        platform, creds, id_playlist, pseudo, int(nb_round), blindtest_db["bt"]
     )
-    if error:
-        id_blindtest = "TOO MUCH"
-    return jsonify({"id": bt_name})
+    return {"id": "ID"}
 
 
 # Call qui appelle l'instance de round d'un blindtest
 @app.route("/blindtest/<id>/<round>/", methods=["GET"])
 def launch_blindtest(id, round):
-    result = blindtest(id, round)
+    result = blindtest(id, round, blindtest_db["bt"])
     return jsonify(
         {
             "result": result["answer"],
@@ -84,7 +104,7 @@ def launch_blindtest(id, round):
 @app.route("/score/<player>/<id>/", methods=["GET", "POST"])
 def score(player, id):
     if request.method == "GET":
-        score = get_score_player(player)
+        score = get_score_player(player, blindtest_db["players"])
         for bt in score:
             if bt["id"] == id:
                 return jsonify({"score": bt["score"]})
@@ -92,9 +112,9 @@ def score(player, id):
     if request.method == "POST":
         temp = request.get_json()
         print(str(temp))
-        score = change_score_player(player, temp["score"], id)
+        score = change_score_player(player, temp["score"], id, blindtest_db["players"])
         print(score)
-        score = change_score_bt(player, temp["score"], id)
+        score = change_score_bt(player, temp["score"], id, blindtest_db["bt"])
         print(score)
         return jsonify({"score": score})
 
@@ -102,35 +122,44 @@ def score(player, id):
 # Call qui récupère tous les scores d'un blindtest
 @app.route("/get_all_score/<id>/", methods=["GET"])
 def get_bt_scores(id):
-    blindtest = get_blindtest(id)
+    blindtest = get_blindtest(id, blindtest_db["bt"])
     return jsonify({"score": blindtest["score"]})
 
 
 # Call qui récupère tous les scores d'un blindtest
 @app.route("/get_all_playlists/", methods=["GET"])
 def get_playlists():
-    playlists = get_all_playlists()
-    return jsonify({"playlists": playlists})
+    playlists = get_all_playlists(blindtest_db["bt"])
+    return jsonify(
+        {
+            "playlists": playlists,
+        }
+    )
 
 
 # Call création si besoin d'un joueur
 @app.route("/get_player/", methods=["POST"])
 def get_player():
     temp = request.get_json()
-    check_player(temp["name"])
+    check_player(temp["name"], blindtest_db["players"])
     return temp
 
 
 # Call pour récupérer les scores d'un joueur
 @app.route("/get_score/<id>/", methods=["GET"])
-def get_player_score(id):
-    score = get_score_player(id)
+def player_score(id):
+    score = get_score_player(id, blindtest_db["players"])
     tab = []
     for k, v in score.items():
-        bt = get_blindtest(k)
+        bt = get_blindtest(k, blindtest_db["bt"])
         info = {"nom": bt["name"], "score": v, "rounds": len(bt["blindtest"])}
         tab.append(info)
     return jsonify({"scores": tab})
+
+
+@app.errorhandler(404)
+def not_found(e):
+    return app.send_static_file("index.html")
 
 
 if __name__ == "__main__":

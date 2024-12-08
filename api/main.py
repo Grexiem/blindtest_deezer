@@ -67,7 +67,7 @@ def getting_specific_playlists(platform, creds, query1):
     return tab
 
 
-def create_json_blindtest(platform, creds, id, id_playlist, pseudo, nb_round):
+def create_json_blindtest(platform, creds, id_playlist, pseudo, nb_round, bt_db):
     if platform == "deezer":
         client = init_deezer(creds)
         playlist = client.get_playlist(id_playlist)
@@ -80,7 +80,6 @@ def create_json_blindtest(platform, creds, id, id_playlist, pseudo, nb_round):
 
     list_song = playlist.get_tracks()
     titres_choisis = set()
-    random.seed(id)
     dicts = []
     print(len(list_song))
     if len(list_song) < nb_round:
@@ -88,11 +87,10 @@ def create_json_blindtest(platform, creds, id, id_playlist, pseudo, nb_round):
     antiblocage = 0
     round = 1
     while nb_round >= round:
-        if antiblocage > 15:
+        if antiblocage > 100:
             break
-        print(titres_choisis)
         titre_choisi = random.choice(list_song)
-        if titre_choisi.preview != "":
+        if titre_choisi.preview != "" and titre_choisi.preview[-4:] == ".mp3":
             if titre_choisi.title not in titres_choisis:
                 antiblocage = 0
                 g = Guess(
@@ -130,8 +128,5 @@ def create_json_blindtest(platform, creds, id, id_playlist, pseudo, nb_round):
         "blindtest": dicts,
         "score": {},
     }
-    file = "../blindtest/" + str(id) + ".json"
-    f = open(file, "a")
-    f.write(json.dumps(dict_global))
-    f.close()
+    bt_db.insert_one(dict_global)
     return False

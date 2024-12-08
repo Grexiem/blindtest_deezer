@@ -1,30 +1,22 @@
 import json
+from bson import ObjectId
 import os
 
 bt_folder = "../blindtest/"
 
 
-def get_all_playlists():
-    tab = []
-    files = os.listdir(bt_folder)
-    files = [file for file in files if os.path.isfile(os.path.join(bt_folder, file))]
-    if not files:
-        print("the folder is empty.")
-    else:
-        for blindtest in files:
-            id = blindtest.split(".")[0]
-            f = open(bt_folder + blindtest, "r")
-            data = json.loads(f.read())
-            f.close()
-            name = data["name"]
-            creator = data["creator"]
-            length = len(data["blindtest"])
-            bl = {"id": id, "creator": creator, "name": name, "length": length}
-            tab.append(bl)
-    return tab
+def get_all_playlists(bt_db):
+    result = []
+    for bt in bt_db.find():
+        bt["_id"] = str(bt["_id"])
+        result.append(bt)
+    return result
 
 
-def blindtest(id, round):
+def blindtest(id, round, bt_db):
+    query = {"_id": id, blindtest: {"round": round}}
+    result = bt_db.find_one(query)
+    print(result)
     file = bt_folder + str(id) + ".json"
     f = open(file, "r")
     json_recup = f.read()
@@ -43,7 +35,7 @@ def blindtest(id, round):
     return json_formatte["blindtest"][x]
 
 
-def get_blindtest(blindtest):
+def get_blindtest(blindtest, bt_db):
     file = bt_folder + str(blindtest) + ".json"
     f = open(file, "r")
     data = json.loads(f.read())
@@ -51,7 +43,7 @@ def get_blindtest(blindtest):
     return data
 
 
-def get_score_bt(blindtest):
+def get_score_bt(blindtest, bt_db):
     file = bt_folder + str(blindtest) + ".json"
     f = open(file, "r")
     data = json.loads(f.read())
@@ -59,7 +51,7 @@ def get_score_bt(blindtest):
     return data["score"]
 
 
-def change_score_bt(player, score, blindtest):
+def change_score_bt(player, score, blindtest, bt_db):
     file = bt_folder + blindtest + ".json"
     f = open(file, "r")
     data = json.loads(f.read())

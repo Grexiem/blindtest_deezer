@@ -59,10 +59,12 @@ const Choice = () => {
     }
   };
   const launchMusic = () => {
-    setTimeout(() => {
-      setTimeLeft(calculateTimeLeft(timeLeft));
-    }, 1000);
     document.getElementById("musicplayer").play();
+    while (timeLeft > 0) {
+      setTimeout(() => {
+        setTimeLeft(calculateTimeLeft(timeLeft));
+      }, 1000);
+    }
   };
 
   return (

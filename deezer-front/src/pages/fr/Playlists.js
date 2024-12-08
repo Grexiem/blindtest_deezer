@@ -30,11 +30,11 @@ const Playlists = () => {
               <h3
                 id="playlists"
                 onClick={() => {
-                  handleClick(playlist.id);
+                  handleClick(playlist._id);
                 }}
               >
                 Créateur : {playlist.creator}, Nom : {playlist.name}, Rounds :{" "}
-                {playlist.length}
+                {playlist["blindtest"].length}
               </h3>
             );
           })}

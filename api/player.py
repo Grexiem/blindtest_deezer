@@ -1,37 +1,29 @@
-import json
-import os
-
+import pymongo
 
 folder_player = "../players/"
 
 
-def check_player(player):
-    file = folder_player + str(player) + ".json"
-    if not os.path.isfile(file):
-        f = open(file, "w")
-        data = {"name": player, "score": {}}
-        f.write(json.dumps(data))
-        f.close()
+def check_player(player, player_db):
+    mydict = {"name": player}
+    result = player_db.find_one(mydict)
+    if result == None:
+        player_db.insert_one(mydict)
 
 
-def get_score_player(player):
-    file = folder_player + str(player) + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    return data["score"]
+def get_score_player(player, player_db):
+    result = player_db.find_one({"name": player})
+    for key in result.keys():
+        if key == "score":
+            return result["score"]
+    return {}
 
 
-def change_score_player(player, score, blindtest):
-    file = folder_player + player + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    if blindtest in data["score"]:
-        if data["score"][blindtest] > score:
-            score = data["score"][blindtest]
-    data["score"][blindtest] = score
-    f2 = open(file, "w")
-    f2.write(json.dumps(data))
-    f2.close()
+def change_score_player(player, score, blindtest, player_db):
+    myquery = {"name": player}
+    result = player_db.find_one(myquery)
+    if blindtest in result["score"]:
+        if result["score"][blindtest] > score:
+            score = result["score"][blindtest]
+            newvalues = {"$set": {"score": {blindtest: score}}}
+            player_db.update_one(myquery, newvalues)
     return score
