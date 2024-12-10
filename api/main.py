@@ -21,23 +21,10 @@ def init_deezer(creds):
     )
 
 
-def init_spotify(creds):
-    return spotify.Client(creds["app_id"], creds["app_secret"])
-    spotify.User.from_token(creds["access_token"])
-
-
-def getting_playlist_user(platform, creds):
-    if platform == "deezer":
-        client = init_deezer(creds)
-        user = client.get_user()
-        playlists = user.get_playlists()
-    else:
-        if platform == "spotify":
-            client = init_spotify(creds)
-            user = spotify.User.from_token(creds["access_token"])
-            playlists = user.get_playlists()
-        else:
-            return []
+def getting_playlist_user(creds):
+    client = init_deezer(creds)
+    user = client.get_user()
+    playlists = user.get_playlists()
     tab = []
     for i in range(5):
         temp = {"id": playlists[i].id, "title": playlists[i].title}
@@ -45,17 +32,9 @@ def getting_playlist_user(platform, creds):
     return tab
 
 
-def getting_specific_playlists(platform, creds, query1):
-    if platform == "deezer":
-        client = init_deezer(creds)
-        playlists = client.search_playlists(query1)
-    else:
-        if platform == "spotify":
-            client = init_spotify(creds)
-            playlists = client.search(query1, types=["playlist"], limit=5)
-        else:
-            return []
-
+def getting_specific_playlists(creds, query1):
+    client = init_deezer(creds)
+    playlists = client.search_playlists(query1)
     tab = []
     for i in range(5):
         temp = {
@@ -67,17 +46,9 @@ def getting_specific_playlists(platform, creds, query1):
     return tab
 
 
-def create_json_blindtest(platform, creds, id_playlist, pseudo, nb_round, bt_db):
-    if platform == "deezer":
-        client = init_deezer(creds)
-        playlist = client.get_playlist(id_playlist)
-    else:
-        if platform == "spotify":
-            client = init_spotify(creds)
-            playlist = client.get_playlist(id_playlist)
-        else:
-            return []
-
+def create_json_blindtest(creds, id_playlist, pseudo, nb_round, bt_db):
+    client = init_deezer(creds)
+    playlist = client.get_playlist(id_playlist)
     list_song = playlist.get_tracks()
     titres_choisis = set()
     dicts = []

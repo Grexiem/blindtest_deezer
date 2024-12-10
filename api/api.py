@@ -32,7 +32,6 @@ app = Flask(__name__, static_folder="../build", static_url_path="/")
 
 server_settings = config_data["server_settings"]
 creds = config_data["deezer_settings"]
-platform = config_data["platform"]
 
 CORS(app, supports_credentials=True)
 
@@ -54,7 +53,7 @@ except (Exception, ConnectionFailure) as error:
 # Call qui récupère mes playlists pour les avoir rapidement.
 @app.route("/get_own_playlists/", methods=["GET"])
 def get_own_playlists():
-    tab_playlists = getting_playlist_user(platform, creds)
+    tab_playlists = getting_playlist_user(creds)
     # print(myclient.list_database_names())
     return jsonify({"playlists": tab_playlists})
 
@@ -64,7 +63,7 @@ def get_own_playlists():
 def get_specific():
     query = request.args
     print(query["query"])
-    tab_playlists = getting_specific_playlists(platform, creds, query["query"])
+    tab_playlists = getting_specific_playlists(creds, query["query"])
     return jsonify({"playlists": tab_playlists})
 
 
@@ -81,9 +80,7 @@ def create_blindtest(id_playlist, pseudo, nb_round):
     else:
         bt_name = pseudo + id
     """
-    create_json_blindtest(
-        platform, creds, id_playlist, pseudo, int(nb_round), blindtest_db["bt"]
-    )
+    create_json_blindtest(creds, id_playlist, pseudo, int(nb_round), blindtest_db["bt"])
     return {"id": "ID"}
 
 
