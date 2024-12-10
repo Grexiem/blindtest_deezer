@@ -51,9 +51,10 @@ def change_score_bt(player, score, id_blindtest, bt_db):
     query = {"_id": id_blindtest}
     result = bt_db.find_one(query)
     update_query = {"$set": {player: score}}
+    if result == None:
+        newvalues = {"$set": {player: score}}
+        bt_db.update_one(query, newvalues)
     if player in result["score"]:
         if result["score"][player] > score:
             bt_db.update_one(query, update_query)
-    else:
-        bt_db.update_one(query, update_query)
     return score

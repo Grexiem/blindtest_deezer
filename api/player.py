@@ -21,6 +21,9 @@ def get_score_player(player, player_db):
 def change_score_player(player, score, blindtest, player_db):
     myquery = {"name": player}
     result = player_db.find_one(myquery)
+    if result == None:
+        newvalues = {"$set": {"score": {blindtest: score}}}
+        player_db.update_one(myquery, newvalues)
     if blindtest in result["score"]:
         if result["score"][blindtest] > score:
             score = result["score"][blindtest]
