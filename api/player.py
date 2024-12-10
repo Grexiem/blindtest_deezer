@@ -1,3 +1,4 @@
+from bson import ObjectId
 import pymongo
 
 folder_player = "../players/"

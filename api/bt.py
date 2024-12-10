@@ -36,19 +36,19 @@ def blindtest(id, round, bt_db):
 
 
 def get_blindtest(id_blindtest, bt_db):
-    query = {"_id": id_blindtest}
+    query = {"_id": ObjectId(id_blindtest)}
     result = bt_db.find_one(query)
     return result
 
 
 def get_score_bt(id_blindtest, bt_db):
-    query = {"_id": id_blindtest}
+    query = {"_id": ObjectId(id_blindtest)}
     result = bt_db.find_one(query)
     return result["score"]
 
 
 def change_score_bt(player, score, id_blindtest, bt_db):
-    query = {"_id": id_blindtest}
+    query = {"_id": ObjectId(id_blindtest)}
     result = bt_db.find_one(query)
     update_query = {"$set": {player: score}}
     if result == None:

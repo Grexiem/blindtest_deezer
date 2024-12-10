@@ -94,7 +94,7 @@ def score(player, id):
     if request.method == "GET":
         score = get_score_player(player, blindtest_db["players"])
         for bt in score:
-            if bt["id"] == id:
+            if str(bt["_id"]) == id:
                 return jsonify({"score": bt["score"]})
         return jsonify({"score": 0})
     if request.method == "POST":
