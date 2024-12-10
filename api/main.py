@@ -59,7 +59,7 @@ def create_json_blindtest(creds, id_playlist, pseudo, nb_round, bt_db):
     round = 1
     while nb_round >= round:
         if antiblocage > 100:
-            break
+            return "ERROR"
         titre_choisi = random.choice(list_song)
         if titre_choisi.preview != "" and titre_choisi.preview[-4:] == ".mp3":
             if titre_choisi.title not in titres_choisis:
@@ -99,5 +99,5 @@ def create_json_blindtest(creds, id_playlist, pseudo, nb_round, bt_db):
         "blindtest": dicts,
         "score": {},
     }
-    bt_db.insert_one(dict_global)
-    return False
+    bt = bt_db.insert_one(dict_global)
+    return str(bt["_id"])

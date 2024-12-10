@@ -82,7 +82,7 @@ function Create() {
       </form>
       {id_blindtest ? (
         <div>
-          {id_blindtest !== "TOO MUCH" ? (
+          {id_blindtest !== "ERROR" ? (
             <div>
               <h2>L'ID de votre blindtest est :</h2>
               <h3>{id_blindtest}</h3>
@@ -96,7 +96,10 @@ function Create() {
               </h2>
             </div>
           ) : (
-            <h3>Nombre de rounds trop élevé</h3>
+            <h3>
+              Une erreur s'est produite ou le nombre de rounds trop élevé pour
+              cette playlist
+            </h3>
           )}
         </div>
       ) : (
