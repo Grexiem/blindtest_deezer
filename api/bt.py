@@ -21,13 +21,13 @@ def blindtest(id, round, bt_db):
         {"$unwind": "$blindtest"},
         {"$match": {"blindtest.round": int(round)}},
     ]
-    result = bt_db.aggregate(pipeline)
-    result = result.to_list()
-    result = result.pop()["blindtest"]
-    print(result)
-    if result == None:
+    pipeline_result = bt_db.aggregate(pipeline)
+    result = pipeline_result.to_list()
+    if pipeline_result == None or len(result) == 0:
         return {"answer": "FIN", "guesses": "FIN", "track": "FIN"}
+    print(result)
 
+    result = result.pop()["blindtest"]
     return {
         "answer": result["answer"],
         "guesses": result["guesses"],
