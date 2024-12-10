@@ -42,14 +42,6 @@ export const setScoreAPI = async (number) => {
   }
 };
 
-export const calculateTimeLeft = (timeLeft) => {
-  if (timeLeft > 0) {
-    return timeLeft - 1;
-  } else {
-    return 0;
-  }
-};
-
 export const getSongs = async () => {
   try {
     const response = await fetch(

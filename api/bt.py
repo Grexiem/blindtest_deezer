@@ -1,6 +1,5 @@
 import json
 from bson import ObjectId
-import os
 
 bt_folder = "../blindtest/"
 
@@ -14,54 +13,47 @@ def get_all_playlists(bt_db):
 
 
 def blindtest(id, round, bt_db):
-    query = {"_id": id, blindtest: {"round": round}}
-    result = bt_db.find_one(query)
+    query = {"_id": ObjectId(id)}
+    print(query)
+    print("round : " + round)
+    pipeline = [
+        {"$match": query},
+        {"$unwind": "$blindtest"},
+        {"$match": {"blindtest.round": int(round)}},
+    ]
+    result = bt_db.aggregate(pipeline)
+    result = result.to_list()
+    result = result.pop()["blindtest"]
     print(result)
-    file = bt_folder + str(id) + ".json"
-    f = open(file, "r")
-    json_recup = f.read()
-    json_formatte = json.loads(json_recup)
-    non_trouve = True
-    x = 0
-    if len(json_formatte["blindtest"]) < int(round):
+    if result == None:
         return {"answer": "FIN", "guesses": "FIN", "track": "FIN"}
-    while non_trouve:
-        if json_formatte["blindtest"][x]["round"] == int(round):
-            print(json_formatte["blindtest"][x])
-            non_trouve = False
-        else:
-            x = x + 1
-    f.close()
-    return json_formatte["blindtest"][x]
+
+    return {
+        "answer": result["answer"],
+        "guesses": result["guesses"],
+        "track": result["track"],
+    }
 
 
-def get_blindtest(blindtest, bt_db):
-    file = bt_folder + str(blindtest) + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    return data
+def get_blindtest(id_blindtest, bt_db):
+    query = {"_id": id_blindtest}
+    result = bt_db.find_one(query)
+    return result
 
 
-def get_score_bt(blindtest, bt_db):
-    file = bt_folder + str(blindtest) + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    return data["score"]
+def get_score_bt(id_blindtest, bt_db):
+    query = {"_id": id_blindtest}
+    result = bt_db.find_one(query)
+    return result["score"]
 
 
-def change_score_bt(player, score, blindtest, bt_db):
-    file = bt_folder + blindtest + ".json"
-    f = open(file, "r")
-    data = json.loads(f.read())
-    f.close()
-    if player in data["score"]:
-        if data["score"][player] > score:
-            score = data["score"][player]
-
-    data["score"][player] = score
-    f2 = open(file, "w")
-    f2.write(json.dumps(data))
-    f2.close()
+def change_score_bt(player, score, id_blindtest, bt_db):
+    query = {"_id": id_blindtest}
+    result = bt_db.find_one(query)
+    update_query = {"$set": {player: score}}
+    if player in result["score"]:
+        if result["score"][player] > score:
+            bt_db.update_one(query, update_query)
+    else:
+        bt_db.update_one(query, update_query)
     return score

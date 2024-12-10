@@ -2,11 +2,7 @@ import { Link } from "react-router-dom";
 import Cookies from "universal-cookie";
 import { useState, useEffect } from "react";
 import ScoreEn from "./Score";
-import {
-  get_All_Score,
-  calculateTimeLeft,
-  getSongs,
-} from "../../components/BlindtestFun";
+import { get_All_Score, getSongs } from "../../components/BlindtestFun";
 const ChoiceEn = () => {
   const [end, setEnd] = useState(false);
   const [answer, setAnswer] = useState(null);
@@ -43,7 +39,22 @@ const ChoiceEn = () => {
         }
       }
     }
+    if (ready === true) {
+      let IntervalId = setTimeout(() => {
+        setTimeout(setTimeLeft(calculateTimeLeft(timeLeft)));
+        if (timeLeft === 0) {
+          clearInterval(IntervalId);
+        }
+      }, 1000);
+    }
   });
+  const calculateTimeLeft = (timeLeft) => {
+    if (timeLeft > 0) {
+      return timeLeft - 1;
+    } else {
+      return 0;
+    }
+  };
 
   const handleClick = async (song) => {
     if (!alreadyAnswered) {
@@ -59,9 +70,6 @@ const ChoiceEn = () => {
     }
   };
   const launchMusic = () => {
-    setTimeout(() => {
-      setTimeLeft(calculateTimeLeft(timeLeft));
-    }, 1000);
     document.getElementById("musicplayer").play();
   };
   return (
