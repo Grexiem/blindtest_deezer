@@ -13,6 +13,7 @@ def check_player(player, player_db):
 
 def get_score_player(player, player_db):
     result = player_db.find_one({"name": player})
+    print(result)
     for key in result.keys():
         if key == "score":
             return result["score"]
@@ -22,7 +23,12 @@ def get_score_player(player, player_db):
 def change_score_player(player, score, blindtest, player_db):
     myquery = {"name": player}
     result = player_db.find_one(myquery)
-    if result == None:
+    if list(result.keys()).count("score") == 0:
+        newvalues = {"$set": {"score": {blindtest: score}}}
+        player_db.update_one(myquery, newvalues)
+        return score
+
+    if list(result["score"].keys()).count(blindtest) == 0:
         newvalues = {"$set": {"score": {blindtest: score}}}
         player_db.update_one(myquery, newvalues)
     if blindtest in result["score"]:
